@@ -1,0 +1,29 @@
+# Pre-commit hooks for cleaning Jupyter notebooks
+# Install: pip install pre-commit && pre-commit install
+
+repos:
+  - repo: https://github.com/kynan/nbstripout
+    rev: 0.8.1
+    hooks:
+      - id: nbstripout
+        files: \.ipynb$
+        args:
+          - --extra-keys
+          - metadata.kernelspec metadata.language_info.version cell.metadata.execution cell.metadata.scrolled
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ['--maxkb=1000']
+      - id: check-json
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        exclude: \.ipynb$
+
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.9.1
+    hooks:
+      - id: nbqa-check-ast
+        name: nbqa check syntax
