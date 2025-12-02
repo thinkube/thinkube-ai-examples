@@ -13,11 +13,12 @@ This repository contains **one complete, working example**: an AI Research Lab A
 
 ```
 thinkube-ai-examples/
-├── 00-platform-validation.ipynb  # Validate all 7 platform services
-└── research-assistant/           # Complete application example
-    ├── 01-langchain-rag.ipynb    # RAG pipeline for paper search
-    ├── 02-multi-agent.ipynb      # Multi-agent coordination
-    └── 03-fine-tuning.ipynb      # Domain-specific fine-tuning
+└── research-assistant/
+    ├── 00-platform-validation.ipynb  # Validate platform services
+    ├── 01-register-litellm.ipynb     # Register LLM models
+    ├── 02-langchain-rag.ipynb        # RAG pipeline for paper search
+    ├── 03-multi-agent.ipynb          # Multi-agent coordination
+    └── 04-fine-tuning.ipynb          # Domain-specific fine-tuning
 ```
 
 ## The Application: AI Research Lab Assistant
@@ -48,15 +49,16 @@ All notebooks integrate with these Thinkube services:
 ## Prerequisites
 
 - JupyterHub access on Thinkube platform
-- `tk-jupyter-agent-dev` image (for notebooks 00, 01, 02)
-- `tk-jupyter-fine-tuning` image (for notebook 03)
+- `tk-jupyter-agent-dev` image (for notebooks 00, 01, 02, 03)
+- `tk-jupyter-fine-tuning` image (for notebook 04)
 
 ## Getting Started
 
 1. Open JupyterHub: `https://jupyter.{your-domain}`
 2. Select `tk-jupyter-agent-dev` image
-3. Start with `00-platform-validation.ipynb` to verify services
-4. Work through `research-assistant/` notebooks in order
+3. Navigate to `research-assistant/`
+4. Start with `00-platform-validation.ipynb` to verify services
+5. Work through notebooks in order (00 → 04)
 
 ## Development Approach
 
