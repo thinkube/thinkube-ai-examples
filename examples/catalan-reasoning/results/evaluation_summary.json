@@ -1,0 +1,15 @@
+{
+  "benchmark": "ALIA-math-test",
+  "num_questions": 50,
+  "base_model": {
+    "name": "GPT-OSS 20B",
+    "accuracy": 0.0,
+    "correct": 0
+  },
+  "finetuned_model": {
+    "name": "GPT-OSS 20B + Catalan LoRA",
+    "accuracy": 0.0,
+    "correct": 0
+  },
+  "improvement": 0.0
+}
