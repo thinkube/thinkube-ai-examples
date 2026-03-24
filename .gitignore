@@ -40,3 +40,4 @@ latex_cache/
 # Secrets
 .env
 .copied
+examples/catalan-reasoning/alia-math-test/
