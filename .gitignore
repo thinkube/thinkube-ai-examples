@@ -31,3 +31,12 @@ Thumbs.db
 *.joblib
 data/
 models/
+
+# Training outputs
+outputs/
+unsloth_compiled_cache/
+latex_cache/
+
+# Secrets
+.env
+.copied
