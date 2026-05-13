@@ -4,74 +4,75 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Mission
 
-Complete the **AI Research Lab Assistant** notebooks with working code. Each notebook should be fully executable in JupyterHub with real platform services.
+Maintain the **AI Research Lab Assistant** notebooks — fully executable tutorials that demonstrate thinkube's AI platform capabilities.
 
 ## Platform: 100% Self-Contained
 
-All AI capabilities run locally on Thinkube - no external API calls:
+All AI capabilities run locally on thinkube — no external API calls:
 
-| Capability | Service | Model |
-|------------|---------|-------|
-| Chat/Completion | `tkt-tensorrt-llm` via LiteLLM | GPT-OSS 20B, Llama, Qwen, Phi |
-| Embeddings | `tkt-text-embeddings` via LiteLLM | nomic-embed-text-v1.5 |
+| Capability | Service | SDK |
+|------------|---------|-----|
+| Chat/Completion | LLM Gateway (Ollama, vLLM, TensorRT-LLM) | `tk-llm` (`LLMClient`, `get_openai_client()`) |
+| Embeddings | LLM Gateway (Text Embeddings Inference) | `tk-llm` (`get_openai_client()`) |
+| Vector Search | Qdrant | `qdrant-client` |
+| Observability | Langfuse | `langfuse` |
+| Experiment Tracking | MLflow | `mlflow` |
 
-Models are stored in MLflow Model Registry and mounted at runtime.
+Models are stored in MLflow Model Registry and served via the LLM Gateway proxy.
 
-## Notebook Structure
+## Repository Structure
 
 ```
 thinkube-ai-examples/
-├── 00-platform-validation.ipynb   # Validate 7 platform services
-├── 01-register-litellm.ipynb      # Register LLM & embeddings in LiteLLM
-└── research-assistant/
-    ├── 02-langchain-rag.ipynb     # RAG pipeline for papers
-    ├── 03-multi-agent.ipynb       # CrewAI multi-agent system
-    └── 04-fine-tuning.ipynb       # Unsloth fine-tuning
+├── examples/
+│   └── research-assistant/
+│       ├── 00-platform-validation.ipynb   # Validate platform services
+│       ├── 01-working-with-local-llms.ipynb  # Model lifecycle (load/unload/chat/embed)
+│       ├── 02-langchain-rag.ipynb         # RAG pipeline with arXiv papers
+│       └── 03-multi-agent.ipynb           # AG2 multi-agent debate with tool calling
+├── CLAUDE.md
+├── README.md
+└── LICENSE
 ```
 
-## Platform Services
+## How Notebooks Reach JupyterHub
+
+1. **Init container** clones this repo to `templates/` (emptyDir, fresh every pod start)
+2. **One-time copy**: `templates/examples/*` → `notebooks/examples/` (JuiceFS persistent)
+3. Users work in `notebooks/examples/research-assistant/` (editable)
+4. Reference copies always available in `templates/examples/research-assistant/` (read-only)
+
+## Platform Services (Environment Variables)
 
 | Service | Environment Variables |
 |---------|----------------------|
-| LiteLLM | `LITELLM_ENDPOINT`, `LITELLM_MASTER_KEY` |
+| LLM Gateway | `LLM_GATEWAY_URL`, `THINKUBE_API_TOKEN` |
 | Qdrant | `QDRANT_URL` |
 | Langfuse | `LANGFUSE_HOST`, `LANGFUSE_PUBLIC_KEY`, `LANGFUSE_SECRET_KEY` |
-| MLflow | `MLFLOW_TRACKING_URI`, `MLFLOW_AUTH_USERNAME`, `MLFLOW_AUTH_PASSWORD`, `MLFLOW_KEYCLOAK_TOKEN_URL`, `MLFLOW_KEYCLOAK_CLIENT_ID`, `MLFLOW_CLIENT_SECRET` |
+| MLflow | `MLFLOW_TRACKING_URI`, `MLFLOW_AUTH_USERNAME`, `MLFLOW_AUTH_PASSWORD` |
 | PostgreSQL | `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` |
-| Valkey | `VALKEY_HOST`, `VALKEY_PORT` |
-| NATS | `NATS_URL` |
+| Valkey | `VALKEY_HOST`, `VALKEY_PORT`, `VALKEY_PASSWORD` |
 
 ## Implementation Rules
 
-1. **No TODO stubs in final code** - Every cell must execute
-2. **Use real services** - Connect to actual platform, not mocks
-3. **Show real outputs** - Results should be from actual execution
-4. **Document issues** - If something doesn't work, document why
+1. **No TODO stubs** — every cell must execute
+2. **Use real services** — connect to actual platform, not mocks
+3. **Show real outputs** — results from actual execution, committed with outputs
+4. **Dynamic model discovery** — use `LLMClient().list_models()`, never hardcode model names
+5. **Educational tone** — explain what each cell does and why
 
 ## Key Libraries
 
-For `tk-jupyter-agent-dev`:
-- `langchain`, `langchain-openai`, `langchain-community`
-- `crewai`
+For `agent-dev` venv:
+- `tk-llm` (thinkube LLM SDK)
+- `langchain`, `langchain-openai`, `langchain-qdrant`
+- `autogen` (AG2 multi-agent framework)
 - `qdrant-client`
 - `langfuse`
-- `arxiv` (for paper fetching)
-- `openai` (LiteLLM is OpenAI-compatible)
+- `arxiv` (paper fetching)
+- `openai` (LLM Gateway is OpenAI-compatible)
 
-For `tk-jupyter-fine-tuning`:
+For `fine-tuning` venv:
 - `unsloth`
-- `peft`
-- `trl`
+- `peft`, `trl`
 - `mlflow`
-
-## Testing Notebooks
-
-To test, the notebooks need to run in JupyterHub:
-1. Open JupyterHub on the Thinkube cluster
-2. Select appropriate image (`tk-jupyter-agent-dev` or `tk-jupyter-fine-tuning`)
-3. Upload/clone this repository
-4. Run notebooks in order
-
-## Related Documentation
-
-- `/home/thinkube/thinkube-platform/thinkube-documentation/guides/thinkube-ai-lab-getting-started.md`
